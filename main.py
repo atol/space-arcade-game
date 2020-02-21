@@ -33,7 +33,7 @@ class GameWidget(Widget):
         Clock.schedule_interval(self.spawn_enemies, 1)
     
     def spawn_enemies(self, dt):
-        x = random.randint(0, Window.width)
+        x = random.randint(0, Window.width - 50)
         y = Window.height
         speed = random.randint(100, 200)
         self.add_entity(Enemy((x, y), speed))
@@ -163,9 +163,11 @@ class Player(Entity):
         x = self.pos[0]
         y = self.pos[1]
         if "left" in game._keys_pressed:
-            x -= step_size
+            if x > 0:
+                x -= step_size
         if "right" in game._keys_pressed:
-            x += step_size
+            if x < Window.width - game.player.size[0]:
+                x += step_size
         self.pos = (x, y)
 
 class Enemy(Entity):
