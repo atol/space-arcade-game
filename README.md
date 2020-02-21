@@ -26,3 +26,7 @@ python3 main.py
 ```
 
 To move the player's spaceship, press the `left` and `right` arrow keys. To shoot bullets, press the `up` arrow key.
+
+## Screenshot
+
+<img src="screenshot.png" width="400">
