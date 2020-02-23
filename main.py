@@ -4,9 +4,12 @@ from kivy.uix.label import CoreLabel
 from kivy.core.window import Window
 from kivy.graphics import Rectangle
 from kivy.clock import Clock
+from kivy.properties import ObjectProperty
+from kivy.uix.image import Image
 import random
 
 class GameWidget(Widget):
+    space_texture = ObjectProperty(None)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Request reference to keyboard
@@ -20,18 +23,23 @@ class GameWidget(Widget):
 
         self.register_event_type("on_frame") # Inherited from super class
 
+        # Create textures
+        self.space_texture = Image(source="assets/background.png").texture
+        self.space_texture.wrap = "repeat"
+        self.space_texture.uvsize = (Window.height / self.space_texture.height, -1)
+  
         with self.canvas:
-            Rectangle(source="assets/background.png", pos=(0,0), size=(Window.width, Window.height))
+            Rectangle(texture=self.space_texture, pos=(0,0), size=(Window.width, Window.height))
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(10,Window.height - 50), size=self._score_label.texture.size)
 
         self._keys_pressed = set()
         self._entities = set()
 
+        # Spawn enemies
+        Clock.schedule_interval(self.spawn_enemies, 1)
         # Execute move every frame
         Clock.schedule_interval(self._on_frame, 0)
 
-        Clock.schedule_interval(self.spawn_enemies, 1)
-    
     def spawn_enemies(self, dt):
         x = random.randint(0, Window.width - 50)
         y = Window.height
