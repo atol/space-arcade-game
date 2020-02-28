@@ -101,6 +101,14 @@ class GameWidget(Widget):
                 result.add(e)
         return result
 
+    def reset(self):
+        for e in game._entities.copy():
+            e.stop_callbacks()
+            game.remove_entity(e)
+        game.score = 0
+        game.player = Player()
+        game.add_entity(game.player)
+
     # Unbind from keyboard
     def _on_keyboard_close(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
@@ -200,10 +208,7 @@ class Enemy(Entity):
         # Check for collisions
         for e in game.colliding_entities(self):
             if e == game.player:
-                game.add_entity(Explosion(self.pos))
-                # Stop own callbacks and remove self from game
-                self.stop_callbacks()
-                game.remove_entity(self)
+                game.reset()
                 return
         # Move
         step_size = self._speed * dt
